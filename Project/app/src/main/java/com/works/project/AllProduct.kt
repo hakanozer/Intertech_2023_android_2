@@ -1,8 +1,12 @@
 package com.works.project
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -51,7 +55,9 @@ class AllProduct : AppCompatActivity() {
         // list item click
         listeView.setOnItemClickListener { parent, view, position, id ->
             val item = arr.get(position)
-            Log.d("index", item.toString() )
+            ProductDetail.item = item
+            val intent = Intent(this, ProductDetail::class.java)
+            startActivity(intent)
         }
 
     }
@@ -68,6 +74,33 @@ class AllProduct : AppCompatActivity() {
         builder.setNegativeButton("Cancel") { dialog, which -> }
         val alert = builder.create()
         alert.show()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if ( item.itemId == R.id.m_likes ) {
+            val intent = Intent(this@AllProduct, Likes::class.java)
+            startActivity(intent)
+        }
+        if ( item.itemId == R.id.m_logout ) {
+            val sharedPreferences = getSharedPreferences("user", MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.remove("id")
+            editor.remove("name")
+            editor.remove("surname")
+            editor.remove("token")
+            editor.remove("image")
+            editor.commit()
+            val intent = Intent(this@AllProduct, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        return true
     }
 
 }
